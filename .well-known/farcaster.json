@@ -1,8 +1,8 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjU0MDExOCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDRjNjcwZDg1ZGQ2MzJlZmQwODVmODdjYWE1NGQ0Y2M5MTExZTkzYjgifQ",
+    "header": "eyJmaWQiOjU0MDExOCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDRjNjcwZDg1ZGQ2MzJlZmQwODVGODdjYWE1NEQ0Q2M5MTExZTkzYjgifQ",
     "payload": "eyJkb21haW4iOiJibGVwYmxvcGlhLXRyYW5zbGF0b3IudmVyY2VsLmFwcCJ9",
-    "signature": ""
+    "signature": "MHhlZGRkZDJkODlmMzE1ZjI1MzMxMTc5NDM3NDA5Mjk2OTg1NTZlYzAyYTgyNTA5MWI0Yjk0NGQxNDcxNTM0OTBhMjY1YmNjZTc4YTVjNzJhOTU3ZjM4OTgxYzg2MGYzNTY5NTM0NDRiZGUxNjMyNDAwM2ExYjQ2MWNkOThkOGRkYjFj"
   },
   "frame": {
     "name": "Blepblopia translator",
