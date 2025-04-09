@@ -12,7 +12,7 @@
     "imageUrl": "https://blepblopia-translator.vercel.app/image.png",
     "buttonTitle": "Translate",
     "splashImageUrl": "https://blepblopia-translator.vercel.app/splash.png",
-    "splashBackgroundColor": "#ffffff",
+    "splashBackgroundColor": "#a1a1ff",
     "webhookUrl": "https://blepblopia-translator.vercel.app/api/webhook"
   }
 }
