@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blepblopia Translator</title>
+    <title>Blepblopia Translator Mini App</title>
     <meta name="screen-orientation" content="portrait">
-    <!-- Metadata untuk Warpcast Frame v2 -->
-    <meta name='fc:frame' content='{"version":"next","imageUrl":"https://blepblopia-translator.vercel.app/og-image.png","aspectRatio":"3:2","button":{"title":"Translate","action":{"type":"launch_frame","name":"Blepblopia Translator","url":"https://blepblopia-translator.vercel.app","splashImageUrl":"https://blepblopia-translator.vercel.app/splash.png","splashBackgroundColor":"#a1a1ff"}}}' />        body {
+    <!-- Metadata untuk Warpcast Frame v2, akan diperbarui setelah Vercel deploy -->
+    <meta name='fc:frame' content='{"version":"next","imageUrl":"https://blepblopia-translator.vercel.app/og-image.png","aspectRatio":"3:2","button":{"title":"Translate","action":{"type":"launch_frame","name":"Blepblopia Translator","url":"https://blepblopia-translator.vercel.app","splashImageUrl":"https://blepblopia-translator.vercel.app/splash.png","splashBackgroundColor":"#a1a1ff"}}}' />
+        body {
             margin: 0;
             padding: 20px;
             font-family: Arial, sans-serif;
@@ -99,19 +100,15 @@
             display: none;
         }
 
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 18px;
-            color: #333;
+        canvas {
+            max-width: 100%;
+            height: auto;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="loading" id="loading">Loading...</div>
-    <div class="container" id="app" style="display: none;">
+    <div class="container">
         <h2>Blepblopia Translator</h2>
         <textarea id="input" placeholder="Enter text or Blepblopia code"></textarea>
         <div class="button-container">
@@ -120,18 +117,13 @@
         </div>
         <div id="output"></div>
         <button id="copyButton" onclick="copyResult()">Copy Result</button>
+        <canvas id="visualizer"></canvas>
     </div>
     <div class="orientation-warning">
         Please rotate your device to portrait mode
     </div>
 
     <script>
-        // Tampilkan aplikasi setelah DOM dimuat
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('app').style.display = 'flex';
-        });
-
         const blepblopiaCode = {
             'a': 'blep', 'b': 'blub', 'c': 'blop', 'd': 'dlep', 'e': 'blib',
             'f': 'flub', 'g': 'glop', 'h': 'hlep', 'i': 'blip', 'j': 'jlub',
@@ -146,6 +138,7 @@
             const output = document.getElementById('output');
             const result = textToBlepblopia(input) + ' blub';
             output.textContent = result;
+            visualizeBlepblopia(result);
             enableCopyButton();
         }
 
@@ -154,6 +147,7 @@
             const output = document.getElementById('output');
             const result = blepblopiaToText(input);
             output.textContent = result;
+            visualizeBlepblopia(input);
             enableCopyButton();
         }
 
@@ -169,6 +163,36 @@
             return words.map(word => {
                 return Object.keys(blepblopiaCode).find(key => blepblopiaCode[key].toLowerCase() === word.toLowerCase()) || word;
             }).join('');
+        }
+
+        function visualizeBlepblopia(blepblopia) {
+            const canvas = document.getElementById('visualizer');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            
+            canvas.width = 500 * dpr;
+            canvas.height = 200 * dpr;
+            canvas.style.width = '500px';
+            canvas.style.height = '200px';
+            canvas.style.display = 'block';
+            
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000';
+            ctx.font = '12px Arial';
+
+            let x = 10;
+            let y = 20;
+            const words = blepblopia.split(' ');
+
+            for (let word of words) {
+                ctx.fillText(word, x, y);
+                x += ctx.measureText(word + ' ').width;
+                if (x > 480) {
+                    x = 10;
+                    y += 20;
+                }
+            }
         }
 
         function copyResult() {
@@ -224,6 +248,13 @@
 
         document.getElementById('copyButton').disabled = true;
         document.getElementById('copyButton').style.opacity = '0.5';
+
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('visualizer');
+            if (canvas.style.display === 'block') {
+                visualizeBlepblopia(document.getElementById('output').textContent);
+            }
+        });
     </script>
 </body>
 </html>
