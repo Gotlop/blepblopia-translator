@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blepblopia Translator Mini App</title>
+    <meta name="screen-orientation" content="portrait">
+    <!-- Metadata untuk Warpcast Frame v2, akan diperbarui setelah Vercel deploy -->
+    <meta name="fc:frame" content='{"version": "next", "imageUrl": "https://your-github-username.github.io/blepblopia-translator/og-image.png", "button": {"title": "Open Translator", "action": {"type": "launch_frame", "name": "Blepblopia Translator", "url": "https://blepblopia-translator.vercel.app/", "splashImageUrl": "https://your-github-username.github.io/blepblopia-translator/splash.png", "splashBackgroundColor": "#f0f0f0"}}}' />
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            max-height: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 16px;
+            resize: vertical;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #copyButton {
+            background-color: #2196F3;
+            flex: none;
+            width: 100%;
+        }
+
+        #copyButton:hover {
+            background-color: #1976D2;
+        }
+
+        #output {
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        @media (orientation: landscape) {
+            .orientation-warning {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                color: white;
+                text-align: center;
+                padding-top: 20%;
+                z-index: 1000;
+            }
+        }
+
+        .orientation-warning {
+            display: none;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Blepblopia Translator</h2>
+        <textarea id="input" placeholder="Enter text or Blepblopia code"></textarea>
+        <div class="button-container">
+            <button onclick="translateToBlepblopia()">Text to Blepblopia</button>
+            <button onclick="translateToText()">Blepblopia to Text</button>
+        </div>
+        <div id="output"></div>
+        <button id="copyButton" onclick="copyResult()">Copy Result</button>
+        <canvas id="visualizer"></canvas>
+    </div>
+    <div class="orientation-warning">
+        Please rotate your device to portrait mode
+    </div>
+
+    <script>
+        const blepblopiaCode = {
+            'a': 'blep', 'b': 'blub', 'c': 'blop', 'd': 'dlep', 'e': 'blib',
+            'f': 'flub', 'g': 'glop', 'h': 'hlep', 'i': 'blip', 'j': 'jlub',
+            'k': 'klop', 'l': 'lblep', 'm': 'mlub', 'n': 'nlop', 'o': 'blopz',
+            'p': 'pleb', 'q': 'qlub', 'r': 'rblub', 's': 'slep', 't': 'tlop',
+            'u': 'blubz', 'v': 'vlep', 'w': 'wblop', 'x': 'xlub', 'y': 'yblep',
+            'z': 'zlop', ' ': 'bblb'
+        };
+
+        function translateToBlepblopia() {
+            const input = document.getElementById('input').value.trim().toLowerCase();
+            const output = document.getElementById('output');
+            const result = textToBlepblopia(input) + ' blub';
+            output.textContent = result;
+            visualizeBlepblopia(result);
+            enableCopyButton();
+        }
+
+        function translateToText() {
+            const input = document.getElementById('input').value.trim();
+            const output = document.getElementById('output');
+            const result = blepblopiaToText(input);
+            output.textContent = result;
+            visualizeBlepblopia(input);
+            enableCopyButton();
+        }
+
+        function textToBlepblopia(text) {
+            return text.split('').map(char => {
+                return blepblopiaCode[char] || char;
+            }).join(' ');
+        }
+
+        function blepblopiaToText(blepblopia) {
+            let cleanedInput = blepblopia.replace(/( blip| blub| blep)$/i, '');
+            const words = cleanedInput.split(' ');
+            return words.map(word => {
+                return Object.keys(blepblopiaCode).find(key => blepblopiaCode[key].toLowerCase() === word.toLowerCase()) || word;
+            }).join('');
+        }
+
+        function visualizeBlepblopia(blepblopia) {
+            const canvas = document.getElementById('visualizer');
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            
+            canvas.width = 500 * dpr;
+            canvas.height = 200 * dpr;
+            canvas.style.width = '500px';
+            canvas.style.height = '200px';
+            canvas.style.display = 'block';
+            
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000';
+            ctx.font = '12px Arial';
+
+            let x = 10;
+            let y = 20;
+            const words = blepblopia.split(' ');
+
+            for (let word of words) {
+                ctx.fillText(word, x, y);
+                x += ctx.measureText(word + ' ').width;
+                if (x > 480) {
+                    x = 10;
+                    y += 20;
+                }
+            }
+        }
+
+        function copyResult() {
+            const output = document.getElementById('output').textContent;
+            const button = document.getElementById('copyButton');
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(output)
+                    .then(() => {
+                        showCopySuccess(button);
+                    })
+                    .catch(err => {
+                        fallbackCopy(output, button);
+                    });
+            } else {
+                fallbackCopy(output, button);
+            }
+        }
+
+        function fallbackCopy(text, button) {
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = text;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            try {
+                document.execCommand('copy');
+                showCopySuccess(button);
+            } catch (err) {
+                alert('Failed to copy: ' + err.message);
+                button.textContent = 'Copy Failed';
+                setTimeout(() => {
+                    button.textContent = 'Copy Result';
+                    button.style.backgroundColor = '#2196F3';
+                }, 2000);
+            }
+            document.body.removeChild(tempTextarea);
+        }
+
+        function showCopySuccess(button) {
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#666';
+            setTimeout(() => {
+                button.textContent = 'Copy Result';
+                button.style.backgroundColor = '#2196F3';
+            }, 2000);
+        }
+
+        function enableCopyButton() {
+            const button = document.getElementById('copyButton');
+            button.disabled = false;
+            button.style.opacity = '1';
+        }
+
+        document.getElementById('copyButton').disabled = true;
+        document.getElementById('copyButton').style.opacity = '0.5';
+
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('visualizer');
+            if (canvas.style.display === 'block') {
+                visualizeBlepblopia(document.getElementById('output').textContent);
+            }
+        });
+    </script>
+</body>
+</html>
